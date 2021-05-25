@@ -6,7 +6,7 @@
 <!--Login--> 
 <div class="container py-5">
   <h1>Login</h1>
-  <form method="POST">
+  <form  action="/office/details/" method="POST">
     {% csrf_token %}
     {{ login_form|crispy }}
     <button class="btn btn-primary" type="submit">Login</button>
@@ -15,5 +15,5 @@
 </div>
 
 {% endblock %}
-Don't have an account? <a href="/office/register/">Create an account</a><br>
+Don't have an account? <a href="/office/registration/">Create an account</a><br>
 Forgot Password?<a href="/accounts/password_reset/">forgot password</a>

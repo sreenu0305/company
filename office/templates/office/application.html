@@ -1,0 +1,10 @@
+{% if error %}
+{{error}}
+{% endif %}
+
+<h2>application form</h2>
+<form action="/office/save_application/" method="post">
+    {% csrf_token %}
+      {{form.as_p}}
+    <input type="submit" value="apply">
+    </form>

@@ -1,0 +1,23 @@
+{% if error %}
+{{error}}
+{% endif %}
+
+<h2>Registration form</h2>
+<!--<form action="/office/save_application/" method="post">-->
+<!--    {% csrf_token %}-->
+<!--      {{form.as_p}}-->
+<!--    <input type="submit" value="Register">-->
+<!--    </form>-->
+
+<form action="/office/save_register/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+     Email<input type="text" name="email"><br>
+     mobile<input type="text" name="phone"><br>
+    photo<input type="file" name="image"><br>
+    salary<input type="number" name="salary"><br>
+    username<input type="text" name="username"><br>
+    password<input type="text" name="password"><br>
+<!--        {{form.as_p}}-->
+
+    <input type="submit" value="Register"><br>
+</form>
