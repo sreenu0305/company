@@ -11,5 +11,7 @@ urlpatterns = [
     path('details/',views.employee_details,name='details'),
     path('save_register/',views.save_register,name='save-register'),
     path('login_page/',views.login_user,name='save-login_page'),
+    path('accept/',views.application_permission,name='application_accept'),
+    path('<int:id>/applied/',views.applied_details,name='application_accept'),
 
 ]

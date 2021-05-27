@@ -30,7 +30,7 @@ def save_application(request):
         form_obj = ApplicationForm(request.POST)
         if form_obj.is_valid():
             form_obj.save()
-            return render(request, 'office/application.html', {'form': ApplicationForm(), 'error': form_obj.errors})
+            return render(request, 'office/index.html', {'form': ApplicationForm(), 'error': form_obj.errors})
 
     return HttpResponseRedirect('/office/')
 
@@ -143,7 +143,30 @@ def employee_details(request):
     gmail = user.email
     print(gmail)
     data = Employee.objects.get(email=gmail)
-    print(data)
+    x = data.office.designation
+    print(x)
+    print(type(x))
+    if x == 'CEO':
+        # pdb.set_trace()
+        # return render(request, 'office/index.html')
+
+        return render(request, 'office/permission.html', {'user': user, 'data': data})
+    else:
+
+        return render(request, 'office/details.html', {'form': data, 'user': user})
+        # return render(request, 'office/index.html')
+
+
+def application_permission(request):
+    data = Application.objects.filter(is_verified=False)
+
     import pdb
     # pdb.set_trace()
-    return render(request, 'office/details.html', {'user': user, 'form': data})
+    # print(data.name)
+
+    return render(request, 'office/accept.html', {'data': data})
+
+
+def applied_details(request,id):
+    data = Application.objects.get(id=id)
+    return render(request, 'office/applied.html', {'data': data})
