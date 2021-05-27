@@ -46,7 +46,7 @@ def save_register(request):
                                         email=request.POST['email'])
         office = Application.objects.get(email=request.POST["email"])
         Employee.objects.create(phone=request.POST['phone'], image=request.FILES['image'],
-                                salary=request.POST['salary'],email=request.POST['email'], user=user,office=office)
+                                salary=request.POST['salary'], email=request.POST['email'], user=user, office=office)
         return HttpResponseRedirect('/office/')
     else:
         return render(request, 'office/application.html', {'error': 'you are not eigible for this job'})
@@ -102,24 +102,40 @@ def password_reset_request(request):
 #     form = NewUserForm
 #     return render(request, "office/register.html", {'form': form})
 
+def login_user(request):
+    return render(request, 'office/login.html')
+
 
 def login_request(request):
-    if request.method == "POST":
-        form = AuthenticationForm(request, data=request.POST)
-        if form.is_valid():
-            username = form.cleaned_data.get('username')
-            password = form.cleaned_data.get('password')
-            user = authenticate(username=username, password=password)
-            if user is not None:
-                login(request, user)
-                messages.info(request, f"You are now logged in as {username}.")
-                return redirect("office/main/")
-            else:
-                messages.error(request, "Invalid username or password.")
+    # if request.method == "POST":
+    #     form = AuthenticationForm(request, data=request.POST)
+    #     if form.is_valid():
+    #         username = form.cleaned_data.get('username')
+    #         password = form.cleaned_data.get('password')
+    #         user = authenticate(username=username, password=password)
+    #         if user is not None:
+    #             login(request, user)
+    #             messages.info(request, f"You are now logged in as {username}.")
+    #             return redirect("office/main/")
+    #         else:
+    #             messages.error(request, "Invalid username or password.")
+    #     else:
+    #         messages.error(request, "Invalid username or password.")
+    # form = AuthenticationForm()
+    # return render(request, "office/login.html", {"login_form": form})
+    username = request.POST['username']
+    password = request.POST['password']
+    # email = request.POST['email']
+    user = authenticate(request, username=username, password=password)
+    if user is not None:
+        login(request, user)
+        if Employee.objects.filter(user=user).exists():
+            return HttpResponseRedirect('/office/details/')
         else:
-            messages.error(request, "Invalid username or password.")
-    form = AuthenticationForm()
-    return render(request, "office/login.html", {"login_form": form})
+            return render(request, 'office/login.html', {'error': 'Invalid username or password'})
+
+    else:
+        return render(request, 'office/login.html', {'error': 'Invalid username or password'})
 
 
 def employee_details(request):
@@ -130,4 +146,4 @@ def employee_details(request):
     print(data)
     import pdb
     # pdb.set_trace()
-    return render(request, 'office/details.html',{'user':user,'form':data})
+    return render(request, 'office/details.html', {'user': user, 'form': data})

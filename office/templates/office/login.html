@@ -1,19 +1,31 @@
 <h2>welcome  to flair technologies</h2>
-{% block content %}      
+<!--{% block content %}      -->
 
-{% load crispy_forms_tags %}
+<!--{% load crispy_forms_tags %}-->
 
-<!--Login--> 
-<div class="container py-5">
-  <h1>Login</h1>
-  <form  action="/office/details/" method="POST">
+<!--&lt;!&ndash;Login&ndash;&gt; -->
+<!--<div class="container py-5">-->
+<!--  <h1>Login</h1>-->
+<!--  <form  action="/office/details/" method="POST">-->
+<!--    {% csrf_token %}-->
+<!--    {{ login_form|crispy }}-->
+<!--    <button class="btn btn-primary" type="submit">Login</button>-->
+<!--  </form>-->
+
+<!--</div>-->
+
+<!--{% endblock %}-->
+{% if error %}
+<h3>{{error}}</h3>
+{% endif %}
+
+<h2>login here</h2>
+<form action="/office/login/" method="post">
     {% csrf_token %}
-    {{ login_form|crispy }}
-    <button class="btn btn-primary" type="submit">Login</button>
-  </form>
+username<input type="text" name="username"><br>
+password<input type="password" name="password"><br>
+<input type="submit" value="Login"><br>
 
-</div>
-
-{% endblock %}
+</form>
 Don't have an account? <a href="/office/registration/">Create an account</a><br>
 Forgot Password?<a href="/accounts/password_reset/">forgot password</a>
