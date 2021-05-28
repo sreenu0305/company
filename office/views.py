@@ -3,7 +3,7 @@ from django.contrib.auth import login, authenticate
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail, BadHeaderError
 from django.http import HttpResponse, HttpResponseRedirect
-from django.contrib.auth.forms import PasswordResetForm, AuthenticationForm
+from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
 from django.db.models.query_utils import Q
@@ -12,7 +12,7 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.contrib import messages
 
-from office.forms import NewUserForm, ApplicationForm, EmployeeForm
+from office.forms import ApplicationForm, EmployeeForm
 from office.models import Application, Employee
 
 
@@ -144,17 +144,23 @@ def employee_details(request):
     print(gmail)
     data = Employee.objects.get(email=gmail)
     x = data.office.designation
-    print(x)
-    print(type(x))
-    if x == 'CEO':
+    print(x.role)
+    print(type(x.role))
+    import pdb
+    # pdb.set_trace()
+    y = 1
+    emp = False
+    if x.role == 'CEO' or 'HR':
+        emp = True
         # pdb.set_trace()
         # return render(request, 'office/index.html')
 
-        return render(request, 'office/permission.html', {'user': user, 'data': data})
-    else:
+    # render(request, 'office/permission.html', {'user': user, 'data': data,'emp':emp})
+    # else:
 
-        return render(request, 'office/details.html', {'form': data, 'user': user})
-        # return render(request, 'office/index.html')
+    return render(request, 'office/permission.html', {'data': data, 'user': user, 'emp': emp})
+    # return render(request, 'office/permission.html', {'user': user, 'data': data})
+    # return render(request, 'office/index.html')
 
 
 def application_permission(request):
@@ -167,6 +173,6 @@ def application_permission(request):
     return render(request, 'office/accept.html', {'data': data})
 
 
-def applied_details(request,id):
+def applied_details(request, id):
     data = Application.objects.get(id=id)
     return render(request, 'office/applied.html', {'data': data})

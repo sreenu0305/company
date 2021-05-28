@@ -3,4 +3,7 @@
 <b>designation:</b>{{data.designation}}<br>
 <b>qualification:</b>{{data.qualification}}<br>
 <b>experience:</b>{{data.experiance_in_years}}<br>
-<b>verification:</b>{{data.is_verified}}<br>
+<!--<b>verification:</b>{{data.is_verified}}<br>-->
+Verification:
+ aprove:<input type="checkbox" name="is_verified" {% if appication.is_verified %}verified{% endif %}/>
+ detlete:<input type="checkbox" name="is_verified" { if appication.is_verified }verified{ endif }/>
