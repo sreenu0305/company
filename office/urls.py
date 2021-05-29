@@ -13,5 +13,16 @@ urlpatterns = [
     path('login_page/',views.login_user,name='save-login_page'),
     path('accept/',views.application_permission,name='application_accept'),
     path('<int:id>/applied/',views.applied_details,name='application_accept'),
+    path('team/',views.team,name='team'),
+    path('save_team/',views.save_team,name='save_team'),
+    path('project/',views.project,name='project'),
+    path('save_project/',views.save_project,name='save_project'),
+    path('total_teams/',views.total_teams,name='total_teams'),
+    path('total_projects/',views.total_projects,name='total_projects'),
+    path('logout/',views.logout_page,name='logout'),
+    path('sent_mail/',views.sent_mail,name='sent_mail'),
+    path('save_mail/',views.save_mail,name='save_mail'),
+    path('emp_list/',views.employ_list,name='emp_list'),
+    path('emp_details/',views.emp_details,name='emp_details'),
 
 ]

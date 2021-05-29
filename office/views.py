@@ -1,7 +1,7 @@
 """ views for project """
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
-from django.core.mail import send_mail, BadHeaderError
+from django.core.mail import send_mail
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
@@ -12,20 +12,24 @@ from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.contrib import messages
 
-from office.forms import ApplicationForm, EmployeeForm
-from office.models import Application, Employee
+from office.forms import ApplicationForm, EmployeeForm, TeamForm, ProjectForm, GmailForm
+from office.models import Application, Employee, Team, Project
+from django.conf import settings
 
 
 def main(request):
+    """ views of main page """
     return render(request, 'office/index.html')
 
 
 def apply(request):
+    """ views for application"""
     form = ApplicationForm
     return render(request, 'office/application.html', {'form': form})
 
 
 def save_application(request):
+    """ to save application"""
     if request.method == 'POST':
         form_obj = ApplicationForm(request.POST)
         if form_obj.is_valid():
@@ -36,11 +40,13 @@ def save_application(request):
 
 
 def registration(request):
+    """ for registration"""
     form = EmployeeForm
     return render(request, 'office/registration.html', {'form': form})
 
 
 def save_register(request):
+    """ save registration form"""
     if Application.objects.filter(email=request.POST['email'], is_verified=True).exists():
         user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'],
                                         email=request.POST['email'])
@@ -53,6 +59,7 @@ def save_register(request):
 
 
 def password_reset_request(request):
+    """ for reset password"""
     if request.method == "POST":
         password_reset_form = PasswordResetForm(request.POST)
         if password_reset_form.is_valid():
@@ -103,26 +110,13 @@ def password_reset_request(request):
 #     return render(request, "office/register.html", {'form': form})
 
 def login_user(request):
+    """ login page"""
     return render(request, 'office/login.html')
 
 
 def login_request(request):
-    # if request.method == "POST":
-    #     form = AuthenticationForm(request, data=request.POST)
-    #     if form.is_valid():
-    #         username = form.cleaned_data.get('username')
-    #         password = form.cleaned_data.get('password')
-    #         user = authenticate(username=username, password=password)
-    #         if user is not None:
-    #             login(request, user)
-    #             messages.info(request, f"You are now logged in as {username}.")
-    #             return redirect("office/main/")
-    #         else:
-    #             messages.error(request, "Invalid username or password.")
-    #     else:
-    #         messages.error(request, "Invalid username or password.")
-    # form = AuthenticationForm()
-    # return render(request, "office/login.html", {"login_form": form})
+    """ save login details"""
+
     username = request.POST['username']
     password = request.POST['password']
     # email = request.POST['email']
@@ -139,31 +133,33 @@ def login_request(request):
 
 
 def employee_details(request):
+    """ login request"""
     user = request.user
     gmail = user.email
     print(gmail)
     data = Employee.objects.get(email=gmail)
     x = data.office.designation
     print(x.role)
-    print(type(x.role))
+    # print(type(x.role))
     import pdb
     # pdb.set_trace()
-    y = 1
-    emp = False
+
+    # emp = False
     if x.role == 'CEO' or 'HR':
         emp = True
         # pdb.set_trace()
         # return render(request, 'office/index.html')
 
-    # render(request, 'office/permission.html', {'user': user, 'data': data,'emp':emp})
+    return render(request, 'office/permission.html', {'user': user, 'data': data, 'emp': emp})
     # else:
 
-    return render(request, 'office/permission.html', {'data': data, 'user': user, 'emp': emp})
-    # return render(request, 'office/permission.html', {'user': user, 'data': data})
+    # return render(request, 'office/permission.html', {'data': data, 'user': user, 'emp': emp})
+    #     return render(request, 'office/details.html', {'user': user, 'form': data})
     # return render(request, 'office/index.html')
 
 
 def application_permission(request):
+    """ giving acceptance for applications"""
     data = Application.objects.filter(is_verified=False)
 
     import pdb
@@ -174,5 +170,89 @@ def application_permission(request):
 
 
 def applied_details(request, id):
+    """ application details"""
     data = Application.objects.get(id=id)
     return render(request, 'office/applied.html', {'data': data})
+
+
+def total_teams(request):
+    """ total teams list """
+    data = Team.objects.all()
+    import pdb
+    # pdb.set_trace()
+    return render(request, 'office/total_team.html', {'data': data})
+
+
+def team(request):
+    """ for  creating teams """
+    form = TeamForm
+    return render(request, 'office/team.html', {'form': form})
+
+
+def save_team(request):
+    """ saving team """
+    if request.method == 'POST':
+        form_obj = TeamForm(request.POST)
+        if form_obj.is_valid():
+            form_obj.save()
+            return render(request, 'office/permission.html', {'form': TeamForm(), 'error': form_obj.errors})
+
+    return HttpResponseRedirect('/office/')
+
+
+def total_projects(request):
+    """ total projects """
+    data = Project.objects.all()
+
+    return render(request, 'office/project_list.html', {'data': data})
+
+
+def project(request):
+    """ creating project """
+    form = ProjectForm()
+    return render(request, 'office/project.html', {'form': form})
+
+
+def save_project(request):
+    """ saving project-"""
+    if request.method == 'POST':
+        form_obj = ProjectForm(request.POST)
+        if form_obj.is_valid():
+            form_obj.save()
+            return render(request, 'office/permission.html', {'form': TeamForm(), 'error': form_obj.errors})
+
+
+def logout_page(request):
+    logout(request)
+    return HttpResponseRedirect('/office/login_page/')
+
+
+def sent_mail(request):
+    data = Employee.objects.all()
+    # mails = data.office.email
+    form = GmailForm
+    # import pdb
+    # pdb.set_trace()
+    return render(request, 'office/email.html', {'form': form, 'mail': data})
+
+
+def save_mail(request):
+    if request.method == 'POST':
+        subject = request.POST.get('subject')
+        body = request.POST.get('message')
+        reciever = request.POST.get('email')
+        send_mail(subject, body, settings.EMAIL_HOST_USER,
+                  [reciever], fail_silently=False)
+        return render(request, 'office/mail_sent.html', {'email': reciever})
+
+    return render(request, 'office/index.html', {})
+
+
+def employ_list(request):
+    data = Employee.objects.all()
+    return render(request, 'office/emp_list.html', {'data': data})
+
+
+def emp_details(request, id):
+    data = Employee.objects.get(id=id)
+    return render(request, 'office/emp_details.html', {'data': data})

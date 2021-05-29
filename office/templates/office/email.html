@@ -1,0 +1,15 @@
+<form action="/office/save_mail/" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+<!--    {{form.as_p}}-->
+    <b>to :</b> <select name="email">
+    {% for each in mail %}
+        <option>{{each.email}}</option>
+    {% endfor %}
+</select>
+    <b>subject :</b><input type="text" name="subject">
+    <b>body :</b><input type="text" name="body">
+    <input type="submit" value="send">
+
+</form>
+<a href="/office/details/">back</a><br>
+<a href="/office/logout/">logout</a><br>

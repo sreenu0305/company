@@ -44,7 +44,6 @@ class Employee(models.Model):
     # team = models.ForeignKey(Team, on_delete=models.CASCADE)
     salary = models.IntegerField()
 
-
     def __str__(self):
         return self.office.name
 
@@ -55,6 +54,9 @@ class Team(models.Model):
     team_lead = models.ForeignKey(Employee, on_delete=models.CASCADE)
     project_working = models.ForeignKey(Project, on_delete=models.CASCADE)
 
+    def __str__(self):
+        return self.team_name
+
 
 class Gmail(models.Model):
     """ models for email """
@@ -62,6 +64,5 @@ class Gmail(models.Model):
     reciever = models.ForeignKey(Employee, on_delete=models.CASCADE)
     # sender = models.EmailField()
     # reciever = models.EmailField()
-    file = models.FileField(null=True, blank=True)
     body = models.TextField()
-    subject = models.CharField(max_length=1000)
+    subject = models.CharField(max_length=10000)

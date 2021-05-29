@@ -8,11 +8,15 @@
 <b>salary:</b>{{data.salary}}<br>
 <b>qualification:</b>{{data.office.qualification}}<br>
 <b>experiance:</b>{{data.office.experiance_in_years}}<br>
-{{emp}}
-{% if emp %}
 
-<a href="/office/accept/">Applications</a>
+{% if emp %}
+{{emp}}
+    <a href="/office/accept/">Applications</a><br>
+    <a href="/office/total_teams/">total teams</a><br>
+    <a href="/office/total_projects/"> total projects</a><br>
 {% endif %}
 
-<a href="">back</a>
+<a href="/office/sent_mail/">Send Email</a><br>
+<a href="/office/emp_list/">total employees list </a><br>
+<a href="/office/logout/">Logout</a><br>
 

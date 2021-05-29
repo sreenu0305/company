@@ -1,0 +1,10 @@
+<form action="" method="post">
+    {% csrf_token %}
+    {% for each in data %}
+    <b>Project name :</b>{{each.project_name}}<br>
+    {% endfor %}
+</form>
+
+<a href="/office/project/">add projects</a><br>
+<a href="/office/details/">back</a><br>
+<a href="/office/logout/">logout</a><br>

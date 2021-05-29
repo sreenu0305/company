@@ -5,5 +5,8 @@
 <b>experience:</b>{{data.experiance_in_years}}<br>
 <!--<b>verification:</b>{{data.is_verified}}<br>-->
 Verification:
- aprove:<input type="checkbox" name="is_verified" {% if appication.is_verified %}verified{% endif %}/>
+ <input type="checkbox" name="is_verified" {% if appication.is_verified %}verified{% endif %}/>
  detlete:<input type="checkbox" name="is_verified" { if appication.is_verified }verified{ endif }/>
+ <input type="submit" value="submit">
+<a href="/office/logout/">logout</a><br>
+<a href="/office/accept/">back</a><br>
