@@ -1,3 +1,5 @@
+<h2>Applicant details</h2>
+
 <b>name:</b>{{data.name}}<br>
 <b>email:</b>{{data.email}}<br>
 <b>designation:</b>{{data.designation}}<br>
@@ -5,8 +7,10 @@
 <b>experience:</b>{{data.experiance_in_years}}<br>
 <!--<b>verification:</b>{{data.is_verified}}<br>-->
 Verification:
+<form action="/office/{{data.id}}/emp_accept/" method="post">
+ {% csrf_token %}
  <input type="checkbox" name="is_verified" {% if appication.is_verified %}verified{% endif %}/>
- detlete:<input type="checkbox" name="is_verified" { if appication.is_verified }verified{ endif }/>
  <input type="submit" value="submit">
+</form>
 <a href="/office/logout/">logout</a><br>
 <a href="/office/accept/">back</a><br>

@@ -23,6 +23,7 @@ urlpatterns = [
     path('sent_mail/',views.sent_mail,name='sent_mail'),
     path('save_mail/',views.save_mail,name='save_mail'),
     path('emp_list/',views.employ_list,name='emp_list'),
-    path('emp_details/',views.emp_details,name='emp_details'),
+    path('<int:id>/emp_details/',views.emp_details,name='emp_details'),
+    path('<int:id>/emp_accept/',views.accept,name='emp_accept'),
 
 ]

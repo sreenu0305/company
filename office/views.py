@@ -2,7 +2,7 @@
 from django.contrib.auth import login, authenticate, logout
 from django.shortcuts import render, redirect
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, BadHeaderError
 from django.contrib.auth.forms import PasswordResetForm
 from django.contrib.auth.models import User
 from django.template.loader import render_to_string
@@ -34,7 +34,8 @@ def save_application(request):
         form_obj = ApplicationForm(request.POST)
         if form_obj.is_valid():
             form_obj.save()
-            return render(request, 'office/index.html', {'form': ApplicationForm(), 'error': form_obj.errors})
+            return render(request, 'office/index.html',
+                          {'form': ApplicationForm(), 'error': form_obj.errors})
 
     return HttpResponseRedirect('/office/')
 
@@ -47,12 +48,14 @@ def registration(request):
 
 def save_register(request):
     """ save registration form"""
-    if Application.objects.filter(email=request.POST['email'], is_verified=True).exists():
+    if Application.objects.filter(email=request.POST['email'],
+                                  is_verified=True).exists():
         user = User.objects.create_user(username=request.POST['username'], password=request.POST['password'],
                                         email=request.POST['email'])
         office = Application.objects.get(email=request.POST["email"])
         Employee.objects.create(phone=request.POST['phone'], image=request.FILES['image'],
-                                salary=request.POST['salary'], email=request.POST['email'], user=user, office=office)
+                                salary=request.POST['salary'], email=request.POST['email'],
+                                user=user, office=office)
         return HttpResponseRedirect('/office/')
     else:
         return render(request, 'office/application.html', {'error': 'you are not eigible for this job'})
@@ -79,13 +82,15 @@ def password_reset_request(request):
                     }
                     email = render_to_string(email_template_name, c)
                     try:
-                        send_mail(subject, email, 'admin@example.com', [user.email], fail_silently=False)
+                        send_mail(subject, email, 'admin@example.com',
+                                  [user.email], fail_silently=False)
                     except BadHeaderError:
 
                         return HttpResponse('Invalid header found.')
 
                     messages.success(request,
-                                     'A message with reset password instructions has been sent to your inbox.')
+                                     'A message with reset password'
+                                     ' instructions has been sent to your inbox.')
                     return redirect("main:homepage")
             messages.error(request, 'An invalid email has been entered.')
     password_reset_form = PasswordResetForm()
@@ -138,14 +143,15 @@ def employee_details(request):
     gmail = user.email
     print(gmail)
     data = Employee.objects.get(email=gmail)
-    x = data.office.designation
-    print(x.role)
+    print(data.office.designation)
+    # print(x)
     # print(type(x.role))
     import pdb
     # pdb.set_trace()
 
-    # emp = False
-    if x.role == 'CEO' or 'HR':
+    emp = False
+    # pdb.set_trace()
+    if data.office.designation.role == "CEO" or data.office.designation.role == "HR":
         emp = True
         # pdb.set_trace()
         # return render(request, 'office/index.html')
@@ -153,19 +159,16 @@ def employee_details(request):
     return render(request, 'office/permission.html', {'user': user, 'data': data, 'emp': emp})
     # else:
 
-    # return render(request, 'office/permission.html', {'data': data, 'user': user, 'emp': emp})
-    #     return render(request, 'office/details.html', {'user': user, 'form': data})
-    # return render(request, 'office/index.html')
+        # return render(request, 'office/permission.html', {'data': data, 'user': user})
+
+
+#     return render(request, 'office/details.html', {'user': user, 'form': data})
+# return render(request, 'office/index.html')
 
 
 def application_permission(request):
     """ giving acceptance for applications"""
     data = Application.objects.filter(is_verified=False)
-
-    import pdb
-    # pdb.set_trace()
-    # print(data.name)
-
     return render(request, 'office/accept.html', {'data': data})
 
 
@@ -178,8 +181,11 @@ def applied_details(request, id):
 def total_teams(request):
     """ total teams list """
     data = Team.objects.all()
-    import pdb
-    # pdb.set_trace()
+    for each in data:
+        import pdb
+        # pdb.set_trace()
+        print(each.team_name)
+
     return render(request, 'office/total_team.html', {'data': data})
 
 
@@ -195,7 +201,8 @@ def save_team(request):
         form_obj = TeamForm(request.POST)
         if form_obj.is_valid():
             form_obj.save()
-            return render(request, 'office/permission.html', {'form': TeamForm(), 'error': form_obj.errors})
+            return render(request, 'office/permission.html',
+                          {'form': TeamForm(), 'error': form_obj.errors})
 
     return HttpResponseRedirect('/office/')
 
@@ -219,24 +226,24 @@ def save_project(request):
         form_obj = ProjectForm(request.POST)
         if form_obj.is_valid():
             form_obj.save()
-            return render(request, 'office/permission.html', {'form': TeamForm(), 'error': form_obj.errors})
+            return HttpResponseRedirect('/office/total_projects')
 
 
 def logout_page(request):
+    """ logout page"""
     logout(request)
     return HttpResponseRedirect('/office/login_page/')
 
 
 def sent_mail(request):
+    """ mail sending """
     data = Employee.objects.all()
-    # mails = data.office.email
     form = GmailForm
-    # import pdb
-    # pdb.set_trace()
     return render(request, 'office/email.html', {'form': form, 'mail': data})
 
 
 def save_mail(request):
+    """ saving mail """
     if request.method == 'POST':
         subject = request.POST.get('subject')
         body = request.POST.get('message')
@@ -249,10 +256,20 @@ def save_mail(request):
 
 
 def employ_list(request):
+    """ total employee list"""
     data = Employee.objects.all()
     return render(request, 'office/emp_list.html', {'data': data})
 
 
 def emp_details(request, id):
+    """ employee details"""
     data = Employee.objects.get(id=id)
     return render(request, 'office/emp_details.html', {'data': data})
+
+
+def accept(request, id):
+    """ application members details """
+    if request.method == 'POST':
+        Application.objects.filter(id=id).update(is_verified=True)
+
+        return HttpResponseRedirect('/office/accept/')

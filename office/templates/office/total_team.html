@@ -1,7 +1,7 @@
 {% for each in data %}
 <b>Team name :</b>{{each.team_name}}<br>
-<b>Team lead :</b>{{each.employee.office.name}}<br>
-<b>project working on :</b>{{each.project.project_name}}<br>
+<b>Team lead :</b>{{each.team_lead.office.name}}<br>
+<b>project working on :</b>{{each.project_working.project_name}}<br>
 {% endfor %}
 
 <a href="/office/team/">add teams</a><br>
